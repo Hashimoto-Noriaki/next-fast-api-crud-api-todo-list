@@ -18,3 +18,7 @@ bun dev
 ```
 npm run type-check
 ```
+### FastAPIの起動
+```
+python run.py
+```
