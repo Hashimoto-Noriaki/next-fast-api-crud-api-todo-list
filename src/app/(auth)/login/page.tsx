@@ -121,12 +121,11 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              アカウントをお持ちでない方は{' '}
               <Link
                 href={ROUTES.REGISTER}
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
-                新規登録
+                アカウントをお持ちでない方は{' '} 新規登録
               </Link>
             </p>
           </div>
