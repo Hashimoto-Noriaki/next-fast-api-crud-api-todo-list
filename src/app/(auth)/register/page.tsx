@@ -146,12 +146,11 @@ export default function RegisterPage() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              既にアカウントをお持ちの方は{' '}
               <Link
                 href={ROUTES.LOGIN}
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
-                ログイン
+                既にアカウントをお持ちの方は{' '} ログイン
               </Link>
             </p>
           </div>
