@@ -44,3 +44,15 @@ next-env.d.ts
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Python
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/*.pyd
+backend/.Python
+backend/env/
+backend/ENV/
+backend/*.db
+backend/*.sqlite3
