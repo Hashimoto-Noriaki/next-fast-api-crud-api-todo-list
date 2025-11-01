@@ -4,22 +4,20 @@ import { ROUTES, APP_NAME } from "@/shared/lib/constants";
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen  from-white to-gray-50">
       {/* Header */}
       <header className="border-b border-gray-200 bg-white">
         <div className="container mx-auto px-4 py-5 flex items-center justify-between max-w-6xl">
           <h1 className="text-2xl font-bold text-primary-600">{APP_NAME}</h1>
           <div className="flex gap-3">
             {/* <Link href={ROUTES.LOGIN}> */}
-              {/* <Button variant="ghost" size="md"> */}
-            <Link href="#">
+            <Link  href={ROUTES.LOGIN}>
               <Button className="bg-emerald-500" size="md">
                 ログイン
               </Button>
             </Link>
-            {/* <Link href={ROUTES.REGISTER}> */}
-              {/* <Button variant="primary" size="md"> */}
-            <Link href="#">
+            {/* <Button variant="primary" size="md"> */}
+            <Link href={ROUTES.REGISTER}>
               <Button  className="bg-amber-500" size="md">
                 新規登録
               </Button>
