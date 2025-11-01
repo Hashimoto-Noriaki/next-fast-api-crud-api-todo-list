@@ -10,13 +10,17 @@ export default function HomePage() {
         <div className="container mx-auto px-4 py-5 flex items-center justify-between max-w-6xl">
           <h1 className="text-2xl font-bold text-primary-600">{APP_NAME}</h1>
           <div className="flex gap-3">
-            <Link href={ROUTES.LOGIN}>
-              <Button variant="ghost" size="md">
+            {/* <Link href={ROUTES.LOGIN}> */}
+              {/* <Button variant="ghost" size="md"> */}
+            <Link href="#">
+              <Button className="bg-emerald-500" size="md">
                 ログイン
               </Button>
             </Link>
-            <Link href={ROUTES.REGISTER}>
-              <Button variant="primary" size="md">
+            {/* <Link href={ROUTES.REGISTER}> */}
+              {/* <Button variant="primary" size="md"> */}
+            <Link href="#">
+              <Button  className="bg-amber-500" size="md">
                 新規登録
               </Button>
             </Link>
@@ -38,7 +42,7 @@ export default function HomePage() {
 
           <div className="flex gap-4 justify-center">
             <Link href={ROUTES.REGISTER}>
-              <Button variant="primary" size="lg">
+              <Button variant="outline" size="lg">
                 今すぐ始める
               </Button>
             </Link>
@@ -143,7 +147,8 @@ export default function HomePage() {
             <p className="text-primary-100 text-lg mb-8">
               無料でアカウントを作成して、効率的なタスク管理を体験してください
             </p>
-            <Link href={ROUTES.REGISTER}>
+            {/* <Link href={ROUTES.REGISTER}> */}
+            <Link href="#">
               <Button variant="secondary" size="lg">
                 無料で新規登録
               </Button>
