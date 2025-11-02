@@ -1,14 +1,21 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { TodoItem } from './TodoItem';
 import type { Todo } from '@/features/todos/types';
 
 interface TodoListProps {
   todos: Todo[];
-  onUpdate: () => void;
 }
 
-export function TodoList({ todos, onUpdate }: TodoListProps) {
+export function TodoList({ todos }: TodoListProps) {
+  const router = useRouter();
+
+  // Todo更新後にページをリフレッシュ
+  const handleUpdate = () => {
+    router.refresh();
+  };
+
   if (todos.length === 0) {
     return (
       <div className="text-center py-12">
@@ -27,9 +34,6 @@ export function TodoList({ todos, onUpdate }: TodoListProps) {
             />
           </svg>
         </div>
-        <h3 className="text-lg font-medium text-gray-900 mb-1">
-          Todoがありません
-        </h3>
         <p className="text-sm text-gray-500">
           新しいTodoを作成してみましょう
         </p>
@@ -40,7 +44,7 @@ export function TodoList({ todos, onUpdate }: TodoListProps) {
   return (
     <div className="space-y-3">
       {todos.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} onUpdate={onUpdate} />
+        <TodoItem key={todo.id} todo={todo} onUpdate={handleUpdate} />
       ))}
     </div>
   );

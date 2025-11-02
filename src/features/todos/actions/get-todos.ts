@@ -13,7 +13,6 @@ interface GetTodosParams {
 
 export async function getTodosAction(params: GetTodosParams = {}) {
   try {
-    // 認証トークン取得
     const token = await getAuthToken();
 
     if (!token) {
@@ -23,7 +22,6 @@ export async function getTodosAction(params: GetTodosParams = {}) {
       };
     }
 
-    // クエリパラメータ構築
     const queryParams = new URLSearchParams();
     if (params.skip !== undefined) queryParams.set('skip', params.skip.toString());
     if (params.limit !== undefined) queryParams.set('limit', params.limit.toString());
@@ -33,7 +31,6 @@ export async function getTodosAction(params: GetTodosParams = {}) {
     const queryString = queryParams.toString();
     const url = `/api/todos${queryString ? `?${queryString}` : ''}`;
 
-    // FastAPI にリクエスト
     const todos = await apiClient<Todo[]>(url, {
       method: 'GET',
       headers: {

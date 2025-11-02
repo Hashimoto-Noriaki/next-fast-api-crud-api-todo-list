@@ -1,82 +1,22 @@
-'use client';
-
-import { useEffect, useState, startTransition } from 'react';
-import { useRouter } from 'next/navigation';
-import { LogoutButton } from '@/features/auth/components';
-import { TodoList } from '@/features/todos/components';
+import { redirect } from 'next/navigation';
+import { getCurrentUser } from '@/shared/lib/auth';
 import { getTodosAction } from '@/features/todos/actions';
-import { Spinner } from '@/shared/components/atoms';
 import { ROUTES } from '@/shared/lib/constants';
-import type { Todo } from '@/features/todos/types';
+import { LogoutButton } from '@/features/auth/components';
+import { TodoList, TodoCreateForm } from '@/features/todos/components';
 
-interface User {
-  id: number;
-  email: string;
-  name: string;
-}
+export default async function TodosPage() {
+  // 認証チェック
+  const user = await getCurrentUser();
 
-export default function TodosPage() {
-  const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  if (!user) {
+    redirect(ROUTES.LOGIN);
+  }
 
-  useEffect(() => {
-    let mounted = true;
+  // Todo一覧を取得（サーバー側）
+  const result = await getTodosAction();
 
-    const run = async () => {
-      // 1) 認証チェック（cookie 読み込み）
-      const userCookie = document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('user='));
-
-      if (!userCookie) {
-        router.push(ROUTES.LOGIN);
-        return;
-      }
-
-      const userData: User = JSON.parse(
-        decodeURIComponent(userCookie.split('=')[1])
-      );
-
-      // 2) state 更新は同期でなく microtask / transition でスケジュール
-      queueMicrotask(() => {
-        if (!mounted) return;
-        startTransition(() => setUser(userData));
-      });
-
-      // 3) Todo 取得
-      try {
-        queueMicrotask(() => {
-          if (!mounted) return;
-          startTransition(() => setIsLoading(true));
-        });
-
-        const result = await getTodosAction();
-
-        if (!mounted) return;
-
-        if (result.success && result.todos) {
-          startTransition(() => setTodos(result.todos));
-        } else if (result.error?.message === '認証が必要です') {
-          router.push(ROUTES.LOGIN);
-          return;
-        } else {
-          alert(result.error?.message || 'Todoの取得に失敗しました');
-        }
-      } finally {
-        if (!mounted) return;
-        startTransition(() => setIsLoading(false));
-      }
-    };
-
-    run();
-    return () => {
-      mounted = false;
-    };
-  }, [router]);
-
-  if (!user) return null;
+  const todos = result.success && result.todos ? result.todos : [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -87,6 +27,7 @@ export default function TodosPage() {
             <h1 className="text-2xl font-bold text-primary-600">Todo App</h1>
 
             <div className="flex items-center gap-4">
+              {/* ユーザー情報 */}
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center">
                   <span className="text-primary-600 font-semibold text-sm">
@@ -100,6 +41,8 @@ export default function TodosPage() {
                   <p className="text-xs text-gray-500">{user.email}</p>
                 </div>
               </div>
+
+              {/* ログアウトボタン */}
               <LogoutButton />
             </div>
           </div>
@@ -108,29 +51,20 @@ export default function TodosPage() {
 
       {/* Content */}
       <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* タイトル */}
         <div className="mb-6">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">マイTodo</h2>
-          <p className="text-gray-600">{todos.length}件のTodo</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            マイTodo
+          </h2>
+          <p className="text-gray-600">
+            {todos.length}件のTodo
+          </p>
         </div>
 
-        {isLoading ? (
-          <div className="flex justify-center py-12">
-            <Spinner size="lg" />
-          </div>
-        ) : (
-          <TodoList
-            todos={todos}
-            onUpdate={async () => {
-              // 再取得も microtask/transition で
-              queueMicrotask(() => startTransition(() => setIsLoading(true)));
-              const result = await getTodosAction();
-              if (result.success && result.todos) {
-                startTransition(() => setTodos(result.todos));
-              }
-              startTransition(() => setIsLoading(false));
-            }}
-          />
-        )}
+        {/* Todo作成フォーム */}
+        <TodoCreateForm />
+        {/* Todo一覧 */}
+        <TodoList todos={todos} />
       </main>
     </div>
   );
