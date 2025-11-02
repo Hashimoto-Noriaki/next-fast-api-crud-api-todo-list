@@ -22,3 +22,5 @@ npm run type-check
 ```
 python run.py
 ```
+- 仮想環境が有効化されていることを確認
+source venv/bin/activate
