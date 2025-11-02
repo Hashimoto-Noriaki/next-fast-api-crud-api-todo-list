@@ -46,10 +46,10 @@ export function TodoItem({ todo, onUpdate }: TodoItemProps) {
 
   return (
     <div className="flex items-start gap-3 p-4 bg-white border border-gray-200 rounded-lg hover:shadow-sm transition-shadow">
-      <button
+      <Button
         onClick={handleToggleComplete}
         disabled={isUpdating}
-        className="mt-1 flex-shrink-0"
+        className="mt-1 bg-emerald-500 text-white"
         aria-busy={isUpdating}
         aria-label={todo.completed ? '未完了にする' : '完了にする'}
       >
@@ -66,7 +66,7 @@ export function TodoItem({ todo, onUpdate }: TodoItemProps) {
             </svg>
           )}
         </div>
-      </button>
+      </Button>
 
       <div className="flex-1 min-w-0">
         <h3 className={`text-sm font-medium ${todo.completed ? 'text-gray-400 line-through' : 'text-gray-900'}`}>
@@ -86,7 +86,7 @@ export function TodoItem({ todo, onUpdate }: TodoItemProps) {
         onClick={handleDelete}
         isLoading={isDeleting}
         disabled={isDeleting}
-        className="text-error-600 hover:text-error-700 hover:bg-error-50"
+        className="bg-red-500 text-white mt-1"
       >
         削除
       </Button>
