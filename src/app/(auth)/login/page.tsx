@@ -7,6 +7,7 @@ import { Button, Checkbox } from '@/shared/components/atoms';
 import { FormField } from '@/shared/components/molecules';
 import { useAuthForm } from '@/features/auth/hooks';
 import { loginSchema, type LoginInput } from '@/features/auth/schemas';
+import { loginAction } from '@/features/auth/actions';
 import { ROUTES, APP_NAME } from '@/shared/lib/constants';
 
 export default function LoginPage() {
@@ -21,22 +22,18 @@ export default function LoginPage() {
   } = useAuthForm(loginSchema);
 
   const onSubmit = async (data: LoginInput) => {
-    try {
-      setServerError('');
+    setServerError('');
 
-      // TODO: PR #4 で Server Action を実装
-      console.log('Login data:', { ...data, rememberMe });
+    // Server Action を呼び出し
+    const result = await loginAction(data);
 
-      // 仮の成功処理（2秒後にTodoページへ遷移）
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // 成功時の処理
-      alert('ログインに成功しました！');
+    if (result.success) {
+      // 成功時: Todoページへリダイレクト
       router.push(ROUTES.TODOS);
-    } catch (error) {
-      setServerError(
-        'ログインに失敗しました。メールアドレスとパスワードを確認してください。'
-      );
+      router.refresh(); // サーバーコンポーネントを更新
+    } else {
+      // エラー時: エラーメッセージを表示
+      setServerError(result.error?.message || 'ログインに失敗しました');
     }
   };
 
@@ -111,6 +108,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               variant="primary"
+              className="bg-emerald-500"
               size="lg"
               fullWidth
               isLoading={isSubmitting}
@@ -121,23 +119,28 @@ export default function LoginPage() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
+              アカウントをお持ちでない方は{' '}
               <Link
                 href={ROUTES.REGISTER}
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
-                アカウントをお持ちでない方は{' '} 新規登録
+                新規登録
               </Link>
             </p>
           </div>
 
           {/* Development Only */}
-          {/* <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+          <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
             <p className="text-xs text-yellow-800 font-medium mb-2">
               🔧 開発モード - テスト用データ
             </p>
-            <p className="text-xs text-yellow-700">Email: test@example.com</p>
-            <p className="text-xs text-yellow-700">Password: Password123</p>
-          </div> */}
+            <p className="text-xs text-yellow-700">
+              Email: test@example.com
+            </p>
+            <p className="text-xs text-yellow-700">
+              Password: Password123
+            </p>
+          </div>
         </div>
       </main>
     </div>

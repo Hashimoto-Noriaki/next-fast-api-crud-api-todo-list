@@ -1,3 +1,4 @@
+// src/app/(auth)/register/page.tsx
 'use client';
 
 import { useState } from 'react';
@@ -7,6 +8,7 @@ import { Button } from '@/shared/components/atoms';
 import { FormField } from '@/shared/components/molecules';
 import { useAuthForm } from '@/features/auth/hooks';
 import { registerSchema, type RegisterInput } from '@/features/auth/schemas';
+import { registerAction } from '@/features/auth/actions';
 import { ROUTES, APP_NAME } from '@/shared/lib/constants';
 
 export default function RegisterPage() {
@@ -20,21 +22,19 @@ export default function RegisterPage() {
   } = useAuthForm(registerSchema);
 
   const onSubmit = async (data: RegisterInput) => {
-    try {
-      setServerError('');
+    setServerError('');
 
-      // TODO: PR #5 で Server Action を実装
-      console.log('Register data:', data);
+    // Server Action を呼び出し
+    const result = await registerAction(data);
 
-      // 仮の成功処理（2秒後にログインページへ遷移）
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // 成功時の処理
-      alert('アカウントが作成されました！ログインしてください。');
-      router.push(ROUTES.LOGIN);
-    } catch (error) {
+    if (result.success) {
+      // 成功時: Todoページへリダイレクト
+      router.push(ROUTES.TODOS);
+      router.refresh();
+    } else {
+      // エラー時: エラーメッセージを表示
       setServerError(
-        'アカウントの作成に失敗しました。もう一度お試しください。'
+        result.error?.message || 'アカウントの作成に失敗しました'
       );
     }
   };
@@ -135,6 +135,7 @@ export default function RegisterPage() {
 
             <Button
               type="submit"
+              className="bg-amber-500"
               variant="primary"
               size="lg"
               fullWidth
@@ -146,11 +147,12 @@ export default function RegisterPage() {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
+              既にアカウントをお持ちの方は{' '}
               <Link
                 href={ROUTES.LOGIN}
                 className="text-primary-600 hover:text-primary-700 font-medium"
               >
-                既にアカウントをお持ちの方は{' '} ログイン
+                ログイン
               </Link>
             </p>
           </div>
