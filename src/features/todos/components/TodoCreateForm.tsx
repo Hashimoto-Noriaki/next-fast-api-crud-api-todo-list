@@ -28,7 +28,7 @@ export function TodoCreateForm() {
 
     if (result.success) {
       reset(); // フォームをリセット
-      setIsOpen(false); // フォームを閉じる
+      setIsOpen(true);
       router.refresh(); // Server Component を再実行してTodo一覧を更新
     } else {
       setServerError(result.error?.message || 'Todoの作成に失敗しました');
@@ -68,11 +68,11 @@ export function TodoCreateForm() {
       </div>
 
       {/* Server Error */}
-      {/* {serverError && (
+      {serverError && (
         <div className="mb-4 p-4 bg-error-50 border border-error-200 rounded-md">
           <p className="text-sm text-error-600">{serverError}</p>
         </div>
-      )} */}
+      )}
 
       {/* フォーム */}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">

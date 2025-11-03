@@ -4,52 +4,29 @@ import { apiClient, ApiError } from '@/shared/lib/api-client';
 import { getAuthToken } from '@/shared/lib/auth';
 import type { Todo } from '@/features/todos/types';
 
-interface GetTodosParams {
-  skip?: number;
-  limit?: number;
-  search?: string;
-  completed?: boolean;
-}
+interface GetTodosParams { skip?: number; limit?: number; search?: string; completed?: boolean; }
 
 export async function getTodosAction(params: GetTodosParams = {}) {
   try {
     const token = await getAuthToken();
+    if (!token) return { success: false, error: { message: '認証が必要です' } };
 
-    if (!token) {
-      return {
-        success: false,
-        error: { message: '認証が必要です' },
-      };
-    }
-
-    const queryParams = new URLSearchParams();
-    if (params.skip !== undefined) queryParams.set('skip', params.skip.toString());
-    if (params.limit !== undefined) queryParams.set('limit', params.limit.toString());
-    if (params.search) queryParams.set('search', params.search);
-    if (params.completed !== undefined) queryParams.set('completed', params.completed.toString());
-
-    const queryString = queryParams.toString();
-    const url = `/api/todos${queryString ? `?${queryString}` : ''}`;
+    const qp = new URLSearchParams();
+    if (params.skip !== undefined) qp.set('skip', String(params.skip));
+    if (params.limit !== undefined) qp.set('limit', String(params.limit));
+    if (params.search) qp.set('search', params.search);
+    if (params.completed !== undefined) qp.set('completed', String(params.completed));
+    const url = `/api/todos${qp.toString() ? `?${qp.toString()}` : ''}`;
 
     const todos = await apiClient<Todo[]>(url, {
       method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store', // ← apiClient が forward する前提
     });
 
     return { success: true, todos };
   } catch (error) {
-    if (error instanceof ApiError) {
-      return {
-        success: false,
-        error: { message: error.message },
-      };
-    }
-
-    return {
-      success: false,
-      error: { message: 'Todoの取得に失敗しました' },
-    };
+    const message = error instanceof ApiError ? error.message : 'Todoの取得に失敗しました';
+    return { success: false, error: { message } };
   }
 }
