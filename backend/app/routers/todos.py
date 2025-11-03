@@ -6,7 +6,7 @@ from app.models import User, Todo
 from app.schemas import TodoCreate, TodoUpdate, TodoResponse
 from app.core.security import get_current_user
 
-router = APIRouter(prefix="/api/todos", tags=["todos"])
+router = APIRouter(prefix="/todos", tags=["todos"])
 
 
 @router.get("", response_model=List[TodoResponse])

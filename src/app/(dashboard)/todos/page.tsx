@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation';
 import { getCurrentUser } from '@/shared/lib/auth';
+import { getTodosAction } from '@/features/todos/actions';
 import { ROUTES } from '@/shared/lib/constants';
 import { LogoutButton } from '@/features/auth/components';
+import { TodoList, TodoCreateForm } from '@/features/todos/components';
 
 export default async function TodosPage() {
   // 認証チェック
@@ -11,11 +13,16 @@ export default async function TodosPage() {
     redirect(ROUTES.LOGIN);
   }
 
+  // Todo一覧を取得（サーバー側）
+  const result = await getTodosAction();
+
+  const todos = result.success && result.todos ? result.todos : [];
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
-        <div className="container mx-auto px-4 py-4 max-w-6xl">
+      <header className="border-b border-gray-200 bg-white sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-4 max-w-4xl">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-primary-600">Todo App</h1>
 
@@ -43,21 +50,21 @@ export default async function TodosPage() {
       </header>
 
       {/* Content */}
-      <main className="flex items-center justify-center p-4 py-20">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 max-w-md text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            🎉 ログイン成功！
+      <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* タイトル */}
+        <div className="mb-6">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            マイTodo
           </h2>
-          <p className="text-gray-600 mb-2">ようこそ、{user.name} さん</p>
-          <p className="text-gray-500 text-sm mb-8">
-            Todo一覧ページは Phase 6 で実装予定です
+          <p className="text-gray-600">
+            {todos.length}件のTodo
           </p>
-          <div className="space-y-2 text-sm text-gray-500">
-            <p>✅ 認証機能完成</p>
-            <p>✅ ログイン・新規登録・ログアウト</p>
-            <p>⏳ Todo CRUD機能（次のPhase）</p>
-          </div>
         </div>
+
+        {/* Todo作成フォーム */}
+        <TodoCreateForm />
+        {/* Todo一覧 */}
+        <TodoList todos={todos} />
       </main>
     </div>
   );
