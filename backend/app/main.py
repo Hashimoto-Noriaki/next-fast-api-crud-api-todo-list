@@ -26,8 +26,8 @@ app.add_middleware(
 )
 
 # ルーター登録
-app.include_router(auth.router)
-app.include_router(todos.router)
+app.include_router(auth.router,prefix="/api")
+app.include_router(todos.router,prefix="/api")
 
 
 @app.get("/")
